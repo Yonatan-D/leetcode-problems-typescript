@@ -1,3 +1,5 @@
+// https://leetcode.cn/problems/array-reduce-transformation/
+
 type Fn = (accum: number, curr: number) => number
 
 export function reduce(nums: number[], fn: Fn, init: number): number {
