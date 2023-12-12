@@ -3,7 +3,7 @@
 type F = (...args: number[]) => void
 
 export function debounce(fn: F, t: number): F {
-  let timer: number
+  let timer: ReturnType<typeof setTimeout> | null = null
   return function (...args) {
     if (timer)
       clearTimeout(timer)
