@@ -1,4 +1,3 @@
-import type { Fn } from './2623.memoize'
 import { memoize } from './2623.memoize'
 
 describe('2623. 记忆函数', () => {

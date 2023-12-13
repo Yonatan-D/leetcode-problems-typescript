@@ -1,17 +1,15 @@
 // https://leetcode.cn/problems/memoize/
 
-export type Fn = (...params: number[]) => number
+type Fn = (...params: number[]) => number
 
 export function memoize(fn: Fn): Fn {
   const cache = new Map()
   return function (...args) {
     const key = JSON.stringify(args)
-    if (cache.has(key))
-      return cache.get(key)
+    if (!cache.has(key))
+      cache.set(key, fn(...args))
 
-    const value = fn(...args)
-    cache.set(key, value)
-    return value
+    return cache.get(key)
   }
 }
 
