@@ -1,44 +1,41 @@
-// https:// leetcode.cn/problems/cache-with-time-limit/
+// https://leetcode.cn/problems/cache-with-time-limit/
 
 export class TimeLimitedCache {
-  private _cache: Map<number, any>
+  #keyMap: Map<number, any>
 
   constructor() {
-    this._cache = new Map()
+    this.#keyMap = new Map()
   }
 
   set(key: number, value: number, duration: number): boolean {
-    if (this._cache.has(key) && this._isExpired(key))
-      this._cache.delete(key)
+    if (this._isExpired(key))
+      this.#keyMap.delete(key)
 
-    const hasKey = this._cache.has(key)
-    this._cache.set(key, { value, expiredTime: Date.now() + duration })
+    const hasKey = this.#keyMap.has(key)
+    this.#keyMap.set(key, { value, expiredTime: Date.now() + duration })
     return hasKey
   }
 
   get(key: number): number {
-    if (this._cache.has(key)) {
-      if (this._isExpired(key)) {
-        this._cache.delete(key)
-        return -1
-      }
-      return this._cache.get(key).value
+    if (this._isExpired(key)) {
+      this.#keyMap.delete(key)
+      return -1
     }
-    return -1
+    return this.#keyMap.get(key).value
   }
 
   count(): number {
-    this._cache.forEach((_, key) => {
+    this.#keyMap.forEach((_, key) => {
       if (this._isExpired(key))
-        this._cache.delete(key)
+        this.#keyMap.delete(key)
     })
-    return this._cache.size
+    return this.#keyMap.size
   }
 
   private _isExpired(key: number): boolean {
-    if (this._cache.has(key)) {
-      const cache = this._cache.get(key)
-      return Date.now() > cache.expiredTime
+    if (this.#keyMap.has(key)) {
+      const value = this.#keyMap.get(key)
+      return Date.now() > value.expiredTime
     }
     return true
   }

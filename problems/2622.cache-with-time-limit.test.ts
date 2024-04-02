@@ -5,14 +5,14 @@ describe('2622. 有时间限制的缓存', () => {
     jest.useFakeTimers()
   })
 
-  it('1.测试 set|get|count', () => {
+  it('1.set,get,count', () => {
     const timeLimitedCache = new TimeLimitedCache()
     expect(timeLimitedCache.set(1, 42, 1000)).toBeFalsy()
     expect(timeLimitedCache.get(1)).toBe(42)
     expect(timeLimitedCache.count()).toBe(1)
   })
 
-  it('2.测试 set|get|count|过期时get', () => {
+  it('2.获取过期的key', () => {
     const timeLimitedCache = new TimeLimitedCache()
     expect(timeLimitedCache.set(1, 42, 100)).toBeFalsy()
     jest.advanceTimersByTime(50)
@@ -22,7 +22,7 @@ describe('2622. 有时间限制的缓存', () => {
     expect(timeLimitedCache.get(1)).toBe(-1)
   })
 
-  it('3.测试 set|get|count|过期时count', () => {
+  it('3.key过期后, 获取count', () => {
     const timeLimitedCache = new TimeLimitedCache()
     expect(timeLimitedCache.set(1, 42, 50)).toBeFalsy()
     jest.advanceTimersByTime(40)
@@ -35,5 +35,10 @@ describe('2622. 有时间限制的缓存', () => {
     expect(timeLimitedCache.get(1)).toBe(-1)
     jest.advanceTimersByTime(50)
     expect(timeLimitedCache.count()).toBe(0)
+  })
+
+  it('4.获取不存在的key', () => {
+    const timeLimitedCache = new TimeLimitedCache()
+    expect(timeLimitedCache.get(1)).toBe(-1)
   })
 })
