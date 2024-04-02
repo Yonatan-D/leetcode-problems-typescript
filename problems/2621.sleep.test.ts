@@ -1,39 +1,52 @@
 import { sleep } from './2621.sleep'
 
-describe('2621. 睡眠函数', () => {
-  const act = async (millis: number, fn: () => void) => {
-    await sleep(millis)
-    fn()
-  }
+const Time = setTimeout
 
-  beforeAll(() => {
+describe('2621. 睡眠函数', () => {
+  beforeEach(() => {
     jest.useFakeTimers()
     jest.spyOn(globalThis, 'setTimeout')
   })
 
-  it('在 100ms 后此异步函数执行完时返回一个 Promise 对象', async () => {
+  it('在 100ms 后此异步函数执行完时返回一个 Promise 对象', (done) => {
     const callback = jest.fn()
 
-    const promise = act(100, callback)
+    // 延时 100 毫秒
+    sleep(100).then(callback)
 
-    expect(callback).not.toHaveBeenCalled()
-    jest.runAllTimers()
+    // 这时候 setTimeout 已经执行
+    expect(setTimeout).toHaveBeenCalledTimes(1)
 
-    await promise
+    // 快进 100 毫秒, 这时候 callback 已经执行
+    jest.advanceTimersByTime(100)
 
-    expect(callback).toHaveBeenCalledTimes(1)
+    Time(() => {
+      expect(callback).toHaveBeenCalled()
+      done()
+    })
   })
 
-  it('在 200ms 后函数执行完时返回一个 Promise 对象', async () => {
+  it('在 200ms 后函数执行完时返回一个 Promise 对象', (done) => {
     const callback = jest.fn()
 
-    const promise = act(200, callback)
+    // 延时 200 毫秒
+    sleep(200).then(callback)
 
-    expect(callback).not.toHaveBeenCalled()
-    jest.runAllTimers()
+    // 这时候 setTimeout 已经执行
+    expect(setTimeout).toHaveBeenCalledTimes(1)
 
-    await promise
+    // 快进 100 毫秒, 这时候 callback 还没执行
+    jest.advanceTimersByTime(100)
 
-    expect(callback).toHaveBeenCalledTimes(1)
+    Time(() => {
+      expect(callback).not.toHaveBeenCalled()
+      // 再快进 100 毫秒, callback 就执行了
+      jest.advanceTimersByTime(100)
+    })
+
+    Time(() => {
+      expect(callback).toHaveBeenCalled()
+      done()
+    })
   })
 })
